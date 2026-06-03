@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: retail_db
+    restart: always
+    environment:
+      POSTGRES_DB: retail_analytics
+      POSTGRES_USER: cv_admin
+      POSTGRES_PASSWORD: CV_MLOps_secure_passwd_2026
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cv_admin -d retail_analytics"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: .
+    container_name: fastapi_cv_backend
+    restart: always
+    environment:
+      - DATABASE_URL=postgresql://cv_admin:CV_MLOps_secure_passwd_2026@db:5432/retail_analytics
+      - MODEL_WEIGHTS_PATH=/workspace/weights/yolov8n.pt
+      - WEIGHTS_DIR=/workspace/weights
+      - UPLOAD_DIR=/workspace/uploads
+      - NVIDIA_VISIBLE_DEVICES=all
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./uploads:/workspace/uploads
+      - ./weights:/workspace/weights
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

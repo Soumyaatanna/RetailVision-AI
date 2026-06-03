@@ -1,0 +1,8 @@
+{
+  "name": "Purplle Store Intelligence AI",
+  "description": "Enterprise-grade real-time store analytics and CCTV video processing dashboard for retail managers, operations teams, and store analysts.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
